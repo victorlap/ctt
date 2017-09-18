@@ -27,7 +27,7 @@ class DistanceController extends Controller
             $distance = $this->findGoogle($distance);
         }
 
-        return $distance;
+        return response()->json($distance);
     }
 
     public function findGoogle(Distance $distance)
