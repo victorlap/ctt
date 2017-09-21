@@ -36,8 +36,8 @@ class DistanceController extends Controller
 
         $res = $this->client->get($url);
         $body = \GuzzleHttp\json_decode($res->getBody());
-        if(is_null($body)) {
-            throw new \Exception("Could not read from Google");
+        if(is_null($body) || $body->rows[0]->elements[0]->status == 'NOT_FOUND') {
+            return ['error' => 'Could not read from Google'];
         }
 
         $distance->distance_value = $body->rows[0]->elements[0]->distance->value;
