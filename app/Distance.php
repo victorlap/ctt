@@ -15,4 +15,8 @@ class Distance extends Model
     protected $fillable = [
         'from', 'to', 'distance_value', 'distance_text','duration_value', 'duration_text'
     ];
+
+    protected $hidden = [
+    	'id'
+    ];
 }
