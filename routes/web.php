@@ -11,4 +11,6 @@
 |
 */
 
-Route::get('/', 'DistanceController');
+Route::view('/', 'welcome');
+
+Route::get('/distance', 'DistanceController');
