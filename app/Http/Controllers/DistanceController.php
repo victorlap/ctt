@@ -23,7 +23,7 @@ class DistanceController extends Controller
             'to' => $request->input('to'),
         ]);
 
-        if(! $distance->exists()) {
+        if(! $distance->exists) {
             $distance = $this->findGoogle($distance);
         }
 
