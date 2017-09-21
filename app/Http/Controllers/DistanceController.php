@@ -47,6 +47,8 @@ class DistanceController extends Controller
 
         $distance->save();
 
+        $distance->fetched_from_google = true;
+
         return $distance;
     }
 }
