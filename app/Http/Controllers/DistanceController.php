@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DistanceRequest;
 use App\Distance;
+use App\Http\Resources\DistanceResource;
 use GuzzleHttp\Client;
 
 class DistanceController extends Controller
@@ -27,7 +28,7 @@ class DistanceController extends Controller
             $distance = $this->findGoogle($distance);
         }
 
-        return response()->json($distance);
+        return response()->json(new DistanceResource($distance));
     }
 
     public function findGoogle(Distance $distance)
