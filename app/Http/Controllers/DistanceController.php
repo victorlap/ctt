@@ -43,7 +43,7 @@ class DistanceController extends Controller
         $distance->distance_value = $body->rows[0]->elements[0]->distance->value;
         $distance->distance_text = $body->rows[0]->elements[0]->distance->text;
         $distance->duration_value = $body->rows[0]->elements[0]->duration->value;
-        $distance->duratoin_text = $body->rows[0]->elements[0]->duration->text;
+        $distance->duration_text = $body->rows[0]->elements[0]->duration->text;
 
         $distance->save();
 
