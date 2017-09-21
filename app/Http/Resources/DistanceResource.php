@@ -17,10 +17,10 @@ class DistanceResource extends Resource
         return [
             'from' => $this->from,
             'to' => $this->to,
-            'distance_value' => $this->distance_value,
-            'distance_text' => $this->distance_text,
-            'duration_value' => $this->duration_value,
-            'duration_text' => $this->duration_text,
+            'distance_value' => $this->distance_value ?? "",
+            'distance_text' => $this->distance_text ?? "",
+            'duration_value' => $this->duration_value ? "",
+            'duration_text' => $this->duration_text ?? "",
             'status' => $this->status ?? 'OK',
         ];
     }
