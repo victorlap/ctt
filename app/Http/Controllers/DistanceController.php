@@ -37,6 +37,7 @@ class DistanceController extends Controller
 
         $res = $this->client->get($url);
         $body = \GuzzleHttp\json_decode($res->getBody());
+
         if(is_null($body) || $body->rows[0]->elements[0]->status == 'NOT_FOUND') {
             $distance->status = "ERROR";
             return $distance;
@@ -48,8 +49,6 @@ class DistanceController extends Controller
         $distance->duration_text = $body->rows[0]->elements[0]->duration->text;
 
         $distance->save();
-
-        $distance->fetched_from_google = true;
 
         return $distance;
     }
