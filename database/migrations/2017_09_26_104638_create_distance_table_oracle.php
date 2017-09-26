@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateDistanceTableOracle extends Migration
 {
@@ -15,8 +15,10 @@ class CreateDistanceTableOracle extends Migration
     {
         Schema::connection('oracle')->create('webapp_distances', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('from');
-            $table->string('to');
+            $table->string('address_from');
+            $table->string('address_to');
+            $table->string('address_from_code')->nullable();
+            $table->string('address_to_code')->nullable();
             $table->integer('duration_value');
             $table->string('duration_text');
             $table->integer('distance_value');

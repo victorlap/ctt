@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Distance extends Model
 {
+    protected $table = 'webapp_distances';
+
+    protected $connection = 'oracle';
 
     /**
      * The attributes that are mass assignable.
@@ -13,6 +16,6 @@ class Distance extends Model
      * @var array
      */
     protected $fillable = [
-        'from', 'to', 'distance_value', 'distance_text','duration_value', 'duration_text'
+        'address_from', 'address_to', 'distance_value', 'distance_text','duration_value', 'duration_text'
     ];
 }
