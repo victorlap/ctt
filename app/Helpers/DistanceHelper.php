@@ -37,13 +37,13 @@ class DistanceHelper
            $distance->save();
         }
 
-        if ($distance->tries < 5 && $distance->created_at->diffInHours(Carbon::now()) > 16) {
+        if ($distance->tries < 5 && $distance->updated_at->diffInHours(Carbon::now()) > 16) {
             $google = $this->fromGoogle($distance);
             if ($google->duration_value !== $distance->duration_value) {
                 $distance->duration_value = ($google['duration_value'] + $distance->duration_value) / 2;
-                $distance->tries += 1;
-                $distance->save();
             }
+            $distance->tries += 1;
+            $distance->save();
         }
 
         return $distance;
