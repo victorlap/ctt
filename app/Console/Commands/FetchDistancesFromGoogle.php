@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Helpers\DistanceHelper;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class FetchDistancesFromGoogle extends Command
 {
@@ -21,6 +22,13 @@ class FetchDistancesFromGoogle extends Command
      * @var string
      */
     protected $description = 'Fetch all the distances from Google';
+
+    /**
+     * The progressbar that is shown
+     *
+     * @var ProgressBar
+     */
+    private $progressBar;
 
     /**
      * Create a new command instance.
@@ -42,6 +50,7 @@ class FetchDistancesFromGoogle extends Command
         $elements = $this->getElements();
 
         $this->info("Trying to find distances for ". count($elements) ." routes.");
+        $this->progressBar = $this->output->createProgressBar(count($elements));
 
         foreach ($elements as $element)
         {
@@ -60,9 +69,12 @@ class FetchDistancesFromGoogle extends Command
                 $element->address_to_code,
                 $element->address_from_code
             );
+
+            $this->progressBar->advance();
         }
 
-        $this->info("Finished.");
+        $this->progressBar->finish();
+        $this->info("\nFinished.");
     }
 
     private function findDistanceAndSave($from, $to, $from_code, $to_code)
@@ -70,7 +82,9 @@ class FetchDistancesFromGoogle extends Command
         $distance = app(DistanceHelper::class)->find($from, $to, $from_code, $to_code);
 
         if($distance === null) {
-            $this->warn("Could not find distance for {$from_code} => {$to_code}");
+            $this->progressBar->clear();
+            $this->warn("\nCould not find distance for {$from_code} => {$to_code}");
+            $this->progressBar->display();
         }
     }
 
