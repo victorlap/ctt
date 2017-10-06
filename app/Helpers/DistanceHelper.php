@@ -20,11 +20,13 @@ class DistanceHelper
         $this->client = $client;
     }
 
-    public function find($from, $to)
+    public function find($from, $to, $from_code, $to_code)
     {
         $distance = Distance::firstOrNew([
             'address_from' => $from,
             'address_to' => $to,
+            'address_from_code' => $from_code,
+            'address_to_code' => $to_code,
         ]);
 
         if (!$distance->exists) {
