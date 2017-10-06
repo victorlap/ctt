@@ -40,24 +40,42 @@ class FetchDistancesFromGoogle extends Command
     {
         $elements = $this->getElements();
 
-        $this->info("Trying to find distances for ". count($elements) ." distances.");
+        $this->info("Trying to find distances for ". count($elements) ." routes.");
 
         foreach ($elements as $element)
         {
             // We try to find a distanace for every element, this creates them in the database.
-            $distance = app(DistanceHelper::class)->find($element->address_from, $element->address_to);
+            $this->findDistanceAndSave(
+                $element->address_from,
+                $element->address_to,
+                $element->address_from_code,
+                $element->address_to_code
+            );
 
-            if($distance === null) {
-                $this->warn("Could not find distance for {$element->address_from_code} => {$element->address_to_code}");
-                continue;
-            }
-
-            $distance->address_from_code = $element->address_from_code;
-            $distance->address_to_code = $element->address_to_code;
-            $distance->save();
+            // Also calculate the way back
+            $this->findDistanceAndSave(
+                $element->address_to,
+                $element->address_from,
+                $element->address_to_code,
+                $element->address_from_code
+            );
         }
 
         $this->info("Finished.");
+    }
+
+    private function findDistanceAndSave($from, $to, $from_code, $to_code)
+    {
+        $distance = app(DistanceHelper::class)->find($from, $to);
+
+        if($distance === null) {
+            $this->warn("Could not find distance for {$from_code} => {$to_code}");
+            return;
+        }
+
+        $distance->address_from_code = $from_code;
+        $distance->address_to_code = $to_code;
+        $distance->save();
     }
 
     private function getElements()
