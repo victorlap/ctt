@@ -12,5 +12,3 @@
 */
 
 Route::view('/', 'welcome');
-
-Route::get('/distance', 'DistanceController');

@@ -13,7 +13,7 @@ class CreateDistanceTableOracle extends Migration
      */
     public function up()
     {
-        Schema::connection('oracle')->create('webapp_distances', function (Blueprint $table) {
+        Schema::create('distances', function (Blueprint $table) {
             $table->increments('id');
             $table->string('address_from');
             $table->string('address_to');
@@ -23,6 +23,7 @@ class CreateDistanceTableOracle extends Migration
             $table->string('duration_text');
             $table->integer('distance_value');
             $table->string('distance_text');
+            $table->integer('tries')->default(1);
             $table->timestamps();
         });
     }
@@ -34,6 +35,6 @@ class CreateDistanceTableOracle extends Migration
      */
     public function down()
     {
-        Schema::connection('oracle')->dropIfExists('webapp_distances');
+        Schema::dropIfExists('distances');
     }
 }

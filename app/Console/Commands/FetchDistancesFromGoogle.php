@@ -90,7 +90,7 @@ class FetchDistancesFromGoogle extends Command
 
     private function getElements()
     {
-        return DB::connection('oracle')->select("
+        return DB::select("
 SELECT DISTINCT
        ADDRESS_TO.ZIPCODE || ' ' || ADDRESS_TO.CITY || ' ' || ADDRESS_TO.COUNTRY1 \"ADDRESS_TO\",
        ADDRESS_FROM.ZIPCODE || ' ' || ADDRESS_FROM.CITY || ' ' || ADDRESS_FROM.COUNTRY1 \"ADDRESS_FROM\",
