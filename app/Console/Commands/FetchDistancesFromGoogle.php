@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Helpers\DistanceHelper;
+use App\Helpers\TransportElementHelper;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class FetchDistancesFromGoogle extends Command
@@ -47,7 +47,7 @@ class FetchDistancesFromGoogle extends Command
      */
     public function handle()
     {
-        $elements = $this->getElements();
+        $elements = app(TransportElementHelper::class)->getMonthsElements();
 
         $this->info("Trying to find distances for ". count($elements) ." routes.");
         $this->progressBar = $this->output->createProgressBar(count($elements));
@@ -86,56 +86,5 @@ class FetchDistancesFromGoogle extends Command
             $this->warn("\nCould not find distance for {$from_code} => {$to_code}");
             $this->progressBar->display();
         }
-    }
-
-    private function getElements()
-    {
-        return DB::select("
-SELECT DISTINCT
-       ADDRESS_TO.ZIPCODE || ' ' || ADDRESS_TO.CITY || ' ' || ADDRESS_TO.COUNTRY1 \"ADDRESS_TO\",
-       ADDRESS_FROM.ZIPCODE || ' ' || ADDRESS_FROM.CITY || ' ' || ADDRESS_FROM.COUNTRY1 \"ADDRESS_FROM\",
-       ADDRESS_FROM_CODE,
-       ADDRESS_TO_CODE
-FROM
-  (SELECT ADDRESS_FROM \"ADDRESS_FROM_CODE\",
-          COALESCE(ADDRESS_STOP1,ADDRESS_TO, ADDRESS_STOPSHOW) \"ADDRESS_TO_CODE\"
-   FROM CTT2.TRANSPORTELEMENT
-   WHERE ADDRESS_FROM = 'CTT'
-     AND IE = 'T'
-     AND COALESCE(TRANSPORTELEMENT.DATEPLANNED1, TRANSPORTELEMENT.AFKOPPELDATE, TRANSPORTELEMENT.SHOWDATEPLANNED) >= TRUNC(SYSDATE, 'MONTH')
-  
-   UNION SELECT ADDRESS_STOP1 \"ADDRESS_FROM_CODE\",
-                COALESCE(ADDRESS_STOP2, ADDRESS_TO, ADDRESS_STOPSHOW) \"ADDRESS_TO_CODE\"
-   FROM CTT2.TRANSPORTELEMENT
-   WHERE ADDRESS_STOP1 IS NOT NULL
-     AND ADDRESS_FROM = 'CTT'
-     AND IE = 'T'
-     AND COALESCE(TRANSPORTELEMENT.DATEPLANNED1, TRANSPORTELEMENT.AFKOPPELDATE, TRANSPORTELEMENT.SHOWDATEPLANNED) >= TRUNC(SYSDATE, 'MONTH')
-  
-   UNION SELECT ADDRESS_STOP2 \"ADDRESS_FROM_CODE\",
-                COALESCE(ADDRESS_STOP3, ADDRESS_TO, ADDRESS_STOPSHOW) \"ADDRESS_TO_CODE\"
-   FROM CTT2.TRANSPORTELEMENT
-   WHERE ADDRESS_STOP2 IS NOT NULL
-     AND ADDRESS_FROM = 'CTT'
-     AND IE = 'T'
-     AND COALESCE(TRANSPORTELEMENT.DATEPLANNED1, TRANSPORTELEMENT.AFKOPPELDATE, TRANSPORTELEMENT.SHOWDATEPLANNED) >= TRUNC(SYSDATE, 'MONTH')
-   
-   UNION SELECT ADDRESS_STOP3 \"ADDRESS_FROM_CODE\",
-                COALESCE(ADDRESS_TO, ADDRESS_STOPSHOW) \"ADDRESS_TO_CODE\"
-   FROM CTT2.TRANSPORTELEMENT
-   WHERE ADDRESS_STOP3 IS NOT NULL
-     AND ADDRESS_FROM = 'CTT'
-     AND IE = 'T'
-     AND COALESCE(TRANSPORTELEMENT.DATEPLANNED1, TRANSPORTELEMENT.AFKOPPELDATE, TRANSPORTELEMENT.SHOWDATEPLANNED) >= TRUNC(SYSDATE, 'MONTH') )
-     
-LEFT OUTER JOIN CTT2.ADDRESS \"ADDRESS_TO\" 
-  ON ADDRESS_TO.CODE = ADDRESS_TO_CODE
-  
-LEFT OUTER JOIN CTT2.ADDRESS \"ADDRESS_FROM\" 
-  ON ADDRESS_FROM.CODE = ADDRESS_FROM_CODE
-  
-WHERE ADDRESS_FROM_CODE IS NOT NULL
-  AND ADDRESS_TO_CODE IS NOT NULL
-        ");
     }
 }
